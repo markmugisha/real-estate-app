@@ -19,6 +19,7 @@ import {
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { app } from "../firebase";
+import { Link } from "react-router-dom";
 
 function Profile() {
   const fileRef = useRef(null);
@@ -186,6 +187,11 @@ function Profile() {
         >
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link
+          to="/create-listing"
+          className="bg-green-700 text-white rounded-lg p-3 text-center uppercase hover:opacity-95"
+          >
+          </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span
