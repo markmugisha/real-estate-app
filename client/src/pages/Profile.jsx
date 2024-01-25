@@ -13,6 +13,9 @@ import {
   deleteUserFailure,
   deleteUserStart,
   deleteUserSuccess,
+  signOutUserFailure,
+  signOutUserStart,
+  signOutUserSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { app } from "../firebase";
@@ -52,7 +55,7 @@ function Profile() {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setFilePerc(Math.round(progress));
       },
-      (error) => {
+      () => {
         setFileUploadError(true);
       },
       () => {
@@ -91,28 +94,38 @@ function Profile() {
   };
 
   const handleDeleteUser = async () => {
-  try {
-    dispatch(deleteUserStart());
-    const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-      method: "DELETE",
-    });
-  
-    const data = await res.json();
-    if (data.success === false) {
-      dispatch(deleteUserFailure(data.message));
-      return;
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
     }
-    
-    dispatch(deleteUserSuccess(data));
+  };
 
-  } catch (error) {
-    dispatch(deleteUserFailure(error.message));
-  }
-  
-  
-  }
-
-
+  const handleSignout = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("/api/auth/signout");
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        return;
+      }
+      dispatch(signOutUserSuccess(data));
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message));
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto text-center">
@@ -175,8 +188,15 @@ function Profile() {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span onClick={handleDeleteUser} className="text-red-700 cursor-pointer">Delete Account</span>
-        <span className="text-red-700 cursor-pointer">Sign out</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete Account
+        </span>
+        <span onClick={handleSignout} className="text-red-700 cursor-pointer">
+          Sign out
+        </span>
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
       <p className="text-green-700">
