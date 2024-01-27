@@ -191,6 +191,7 @@ function Profile() {
           to="/create-listing"
           className="bg-green-700 text-white rounded-lg p-3 text-center uppercase hover:opacity-95"
           >
+            Create Listing
           </Link>
       </form>
       <div className="flex justify-between mt-5">
