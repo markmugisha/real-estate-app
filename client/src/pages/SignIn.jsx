@@ -82,7 +82,7 @@ function SignIn() {
           <OAuth />
         </form>
         <div className="flex justify-between items-center mt-5">
-          <div className="text-slate-600 font-semibold">Don't have an account?</div>
+          <div className="text-slate-600 font-semibold">Do not have an account?</div>
           <Link to="/sign-up">
             <span className="text-blue-700 font-semibold">Sign up</span>
           </Link>

@@ -7,7 +7,7 @@ import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
 import { FaBath, FaBed, FaChair, FaMapMarkerAlt, FaParking, FaShare } from "react-icons/fa";
 import { Link } from "react-router-dom";
-// import Contact from "../components/Contact";
+import Contact from "../components/Contact";
 
 const Listing = () => {
   SwiperCore.use([Navigation]);
@@ -99,13 +99,15 @@ const Listing = () => {
                 </p>
               )}
               {currentUser && listing.userRef !== currentUser._id && !contact && (
-                <button
-                  onClick={() => setContact(true)}
-                  className="bg-slate-800 w-full max-w-[200px] text-white text-center p-1 rounded-md"
-                >
-                  Contact Landlord
-                </button>
-              )}
+              <button
+                onClick={() => setContact(true)}
+                className="bg-slate-900 w-full max-w-[200px] text-white text-center p-1 rounded-md"
+              >
+                Contact Landlord
+              </button>
+            )}
+            {contact && <Contact listing={listing} />}
+
               <Link to={'/profile'}>
               <p className="text-green-700 font-semibold underline">To Profile or Signin</p>
               </Link>
@@ -137,15 +139,6 @@ const Listing = () => {
                 {listing.furnished ? "Furnished" : "Unfurnished"}
               </li>
             </ul>
-            {/* {currentUser && listing.userRef !== currentUser._id && !contact && (
-              <button
-                onClick={() => setContact(true)}
-                className="bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3"
-              >
-                Contact Landlord
-              </button>
-            )}
-            {contact && <Contact listing={listing} />} */}
           </div>
         </div>
       )}
