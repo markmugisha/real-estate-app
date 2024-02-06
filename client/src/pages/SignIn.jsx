@@ -21,6 +21,7 @@ function SignIn() {
     });
   };
 
+  /*****************HANDLE SUBMIT FUNCTION*****************************/
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -35,15 +36,22 @@ function SignIn() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(signInFailure(data.message));
+        setTimeout(() => {
+          dispatch(signInFailure(null)); // Clear the error message
+        }, 4000); // Hide error message after 4 seconds
         return;
       }
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
       dispatch(signInFailure(error.message));
+      setTimeout(() => {
+        dispatch(signInFailure(null)); // Clear the error message
+      }, 4000); // Hide error message after 4 seconds
     }
   };
 
+ 
   return (
     <div className="h-full items-center justify-center bg-sage-300 max-w-lg mx-auto">
       <div className="bg-white bg-opacity-90 p-8 rounded-md w-full max-w-md mt-12">

@@ -37,6 +37,8 @@ function Profile() {
     }
   }, [file]);
 
+
+
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + file.name;
@@ -61,9 +63,12 @@ function Profile() {
     );
   };
 
+
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,7 +88,7 @@ function Profile() {
       }
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
-
+  
       // Clear success message after 4 seconds
       setTimeout(() => {
         setUpdateSuccess(false);
@@ -92,7 +97,7 @@ function Profile() {
       dispatch(updateUserFailure(error.message));
     }
   };
-
+  
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
