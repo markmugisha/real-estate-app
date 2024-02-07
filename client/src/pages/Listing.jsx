@@ -108,8 +108,8 @@ const Listing = () => {
             )}
             {contact && <Contact listing={listing} />}
 
-              <Link to={'/profile'}>
-              <p className="text-green-700 font-semibold underline">To Profile or Signin</p>
+              <Link to={'/'}>
+              <p className="text-green-700 font-semibold underline">To Home Page</p>
               </Link>
 
             </div>

@@ -10,10 +10,6 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
-  deleteUserFailure,
-  deleteUserStart,
-  deleteUserSuccess,
-  signOutUserStart,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { app } from "../firebase";
@@ -27,7 +23,6 @@ function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [showListingsError, setShowListingsError] = useState(false);
   const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
 
@@ -36,8 +31,6 @@ function Profile() {
       handleFileUpload(file);
     }
   }, [file]);
-
-
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -63,90 +56,50 @@ function Profile() {
     );
   };
 
-
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      dispatch(updateUserStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message));
-        return;
-      }
-      dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
-  
-      // Clear success message after 4 seconds
-      setTimeout(() => {
-        setUpdateSuccess(false);
-      }, 4000); // 4000 milliseconds (4 seconds)
+        dispatch(updateUserStart());
+        const res = await fetch(`/api/user/update/${currentUser._id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
+        const data = await res.json();
+        if (data.success === false) {
+            dispatch(updateUserFailure(data.message));
+
+            // Clear error message after 4 seconds
+            setTimeout(() => {
+                dispatch(updateUserFailure(null)); // Clear the error message
+            }, 4000);
+            return;
+        }
+        dispatch(updateUserSuccess(data));
+        setUpdateSuccess(true);
+
+        // Clear success message after 4 seconds
+        setTimeout(() => {
+            setUpdateSuccess(false);
+        }, 4000); // 4000 milliseconds (4 seconds)
     } catch (error) {
-      dispatch(updateUserFailure(error.message));
+        dispatch(updateUserFailure(error.message));
+        // Clear error message after 4 seconds
+        setTimeout(() => {
+            dispatch(updateUserFailure(null)); // Clear the error message
+        }, 4000);
+        setTimeout(() => {
+            setUpdateSuccess(false);
+        }, 4000);
     }
-  };
-  
-  const handleDeleteUser = async () => {
-    try {
-      dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: "DELETE",
-      });
+};
 
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
-        return;
-      }
-
-      dispatch(deleteUserSuccess(data));
-    } catch (error) {
-      dispatch(deleteUserFailure(error.message));
-    }
-  };
-
-  const handleSignout = async () => {
-    try {
-      dispatch(signOutUserStart());
-      const res = await fetch("/api/auth/signout");
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
-        return;
-      }
-      dispatch(deleteUserSuccess(data));
-    } catch (error) {
-      dispatch(deleteUserFailure(error.message));
-    }
-  };
-
-  const handleShowListings = async () => {
-    try {
-      setShowListingsError(false);
-      const res = await fetch(`/api/user/listings/${currentUser._id}`);
-      const data = await res.json();
-      if (data.success === false) {
-        setShowListingsError(true);
-        return;
-      }
-
-      setUserListings(data);
-    } catch (error) {
-      setShowListingsError(true);
-    }
-  };
 
   const handleListingDelete = async (listingId) => {
     try {
@@ -167,23 +120,21 @@ function Profile() {
   };
 
   return (
-    <div className="p-3 max-w-lg mx-auto text-center">
-      {/* Separate div above the profile picture */}
-      <div className="mb-4">
-        <h1 className="text-3xl font-semibold">Profile</h1>
-      </div>
-
+    <div className="p-3 max-w-lg mx-auto text-center mt-5">
       {/* Profile picture, centered */}
       <img
         onClick={() => fileRef.current.click()}
         src={formData.avatar || currentUser.avatar}
         alt="profile"
-        className="rounded-full h-24 w-24 object-cover cursor-pointer mx-auto"
+        className="rounded-full h-20 w-20 object-cover cursor-pointer mx-auto mb-5"
       />
 
       {/* Form container with white background */}
       <div className="bg-white p-5 rounded-lg mt-2">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <h1 className="text-2xl font-semibold">Profile</h1>
+          <hr />
+
           {/* Input fields and buttons */}
           <input
             type="file"
@@ -236,29 +187,7 @@ function Profile() {
           >
             {loading ? "Loading..." : "Update"}
           </button>
-          <Link
-            className="bg-green-700 text-white p-3 rounded-lg text-center uppercase hover:opacity-95"
-            to="/create-listing"
-          >
-            Create Listing
-          </Link>
         </form>
-      </div>
-
-      {/* Delete Account, Sign out, Show Listings */}
-      <div className="flex justify-between mt-5">
-        <span
-          onClick={handleDeleteUser}
-          className="text-red-700 cursor-pointer font-semibold"
-        >
-          Delete Account
-        </span>
-        <span onClick={handleSignout} className="text-red-700 cursor-pointer font-semibold">
-          Sign out
-        </span>
-        <button onClick={handleShowListings} className="text-green-700 font-semibold">
-          Show Listings
-        </button>
       </div>
 
       {/* Error and success messages */}
@@ -273,10 +202,6 @@ function Profile() {
           <h1 className="text-center mt-7 text-2xl font-semibold">
             My Listings
           </h1>
-
-          <p className="text-red-700 mt-5">
-            {showListingsError ? "Error showing listings" : ""}
-          </p>
 
           {userListings.map((listing) => (
             <div
