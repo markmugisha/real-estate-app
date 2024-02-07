@@ -8,6 +8,9 @@ import {
   deleteUserFailure,
   deleteUserSuccess,
   deleteUserStart,
+  signOutUserFailure,
+  signOutUserSuccess,
+
 } from "../redux/user/userSlice";
 
 import { useDispatch } from "react-redux";
@@ -32,18 +35,20 @@ function Header() {
 
   const handleSignout = async () => {
     try {
-      dispatch(signOutUserStart());
+      dispatch(signOutUserStart()); // Dispatching a start action indicating the sign-out process has started
       const res = await fetch("/api/auth/signout");
       const data = await res.json();
       if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
+        dispatch(signOutUserFailure(data.message)); // Dispatching a failure action if sign-out was not successful
         return;
       }
-      dispatch(deleteUserSuccess(data));
+      dispatch(signOutUserSuccess()); // Dispatching a success action if sign-out was successful
+      navigate("/"); // Redirecting to the sign-in page after sign-out
     } catch (error) {
-      dispatch(deleteUserFailure(error.message));
-    }
+      dispatch(signOutUserFailure(error.message)); // Dispatching a failure action if there was an error during sign-out
+    }  
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
