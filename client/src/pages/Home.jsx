@@ -1,10 +1,9 @@
 /* eslint-disable react/jsx-key */
-// import React from 'react'
 import { Link } from "react-router-dom";
 import ListingItem from "../components/ListingItem";
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 import SwiperCore from "swiper";
 import "swiper/css/bundle";
 
@@ -13,8 +12,6 @@ function Home() {
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
   SwiperCore.use([Navigation]);
-
-  console.log(offerListings);
 
   useEffect(() => {
     const fetchOfferListings = async () => {
@@ -52,9 +49,12 @@ function Home() {
 
   return (
     <div className="">
-      {/* Swipper */}
-
-      <Swiper navigation>
+      <Swiper
+        navigation={true}
+        loop={true}
+        modules={[Navigation, Autoplay]}
+        autoplay={{ delay: 4500 }}
+      >
         {offerListings &&
           offerListings.length > 0 &&
           offerListings.map((listing) => (
@@ -70,17 +70,14 @@ function Home() {
             </SwiperSlide>
           ))}
       </Swiper>
-
-      {/* Top */}
       <div className="flex justify-between gap-6 p-10 px-3 max-w-6xl">
         <div>
           <h1 className="text-slate-700 font-bold text-3xl lg:text-5xl">
-            Find your next <span className="text-slate-500">perfect</span>
+            Welcome <span className="text-slate-500">Home,</span>
             <br />
-            place with ease
+            Your search ends here!
           </h1>
         </div>
-
         <div className="mr-auto">
           <div className="text-gray-400 ">
             Realtime estate, the leading real estate marketplace.
@@ -89,9 +86,9 @@ function Home() {
           </div>
           <Link
             to={"/search"}
-            className="text-xs sm:text-sm text-blue-800 font-bold hover:underline "
+            className="text-xs md:text-base text-blue-800 font-bold hover:underline "
           >
-            Let us start now
+            Let us get started
           </Link>
         </div>
       </div>

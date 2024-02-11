@@ -1,4 +1,4 @@
-//For verifying a user before updating and any the CRUD 
+//For verifying a user before updating any of the CRUD 
 import { errorHandler } from "./error.js";
 import jwt from 'jsonwebtoken';
 

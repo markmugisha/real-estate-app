@@ -10,6 +10,7 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteListingFailure,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { app } from "../firebase";
@@ -26,23 +27,38 @@ function Profile() {
   const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
 
+/***************************** HANDLE FILE UPLOAD USEEFFECT *****************************/
+/* 
+  1. useEffect for triggering the file upload function when the file state changes. The state changes when the user selects a file to upload. When a user selects a file, the file state is updated with the selected file triggering a rerender of the component initiating a file upload to Firebase.
+*/
+
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
     }
   }, [file]);
+  
 
+  /*************************   HANDLE FILE UPLOAD FUNCTION   ****************************/
+ /* 
+  1. Get the storage reference from the firebase app
+  2. Create a new file name by concatenating the current time and the file name you want to upload to the storage bucket in firebase. The time part is to ensure that the file name is unique
+  3. Create a reference to the file in the storage bucket
+  4. Create a new upload task to upload the file to the storage bucket
+  5. Listen for state changes in the upload task. If the state changes, calculate the upload progress and set the filePerc state to the progress percentage
+  6. If there is an error during the upload, set the fileUploadError state to true
+  7. If the upload is successful, get the download URL of the uploaded file and set the avatar in the formData state to the download URL
+  */
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + file.name;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      "state_changed",
+    
+    uploadTask.on("state_changed",
       (snapshot) => {
         const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setFilePerc(Math.round(progress));
       },
       () => {
@@ -50,49 +66,64 @@ function Profile() {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, avatar: downloadURL })
+        setFormData({ ...formData, avatar: downloadURL })
         );
       }
-    );
-  };
+      );
+    };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
+    /*****************************    HANDLE CHANGE FUNCTION   ******************************/
+    
+    const handleChange = (e) => {
+      setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+    /*****************************    HANDLE SUBMIT FUNCTION   ******************************/
+    /* 
+    1. API REQUEST TO UPDATE USER to api/user/update/:id to fetch the user data from the db
+    2. If the response is unsuccessful (ie if the user data is NOT updated), dispatch updateUserFailure action with the error message
+    3. Clear the error message after 4 seconds
+    4. If the response is successful(ie if the user data is updated), dispatch updateUserSuccess action with the user data as payload to update the user state in the redux store.
+    5. Set the updateSuccess state to true to display a success message to the user for 4 seconds and then set it back to false after 4 seconds
+    6. If there is an error during the API request, dispatch updateUserFailure action with the error message
+    7. Clear the error message after 4 seconds
+    8. Set the updateSuccess state to false after 4 seconds
+    9. The updateSuccess is set to false after 4 seconds to clear any possible success message from the UI.
+    */
+    
+    const handleSubmit = async (e) => {
+      e.preventDefault();
     try {
         dispatch(updateUserStart());
-        const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        const response = await fetch(`/api/user/update/${currentUser._id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(formData),
         });
-        const data = await res.json();
+
+        const data = await response.json();
         if (data.success === false) {
             dispatch(updateUserFailure(data.message));
-
-            // Clear error message after 4 seconds
             setTimeout(() => {
-                dispatch(updateUserFailure(null)); // Clear the error message
+                dispatch(updateUserFailure(null)); 
             }, 4000);
             return;
         }
+
         dispatch(updateUserSuccess(data));
         setUpdateSuccess(true);
-
-        // Clear success message after 4 seconds
         setTimeout(() => {
             setUpdateSuccess(false);
-        }, 4000); // 4000 milliseconds (4 seconds)
+        }, 4000);
+
     } catch (error) {
         dispatch(updateUserFailure(error.message));
-        // Clear error message after 4 seconds
+        
         setTimeout(() => {
-            dispatch(updateUserFailure(null)); // Clear the error message
+            dispatch(updateUserFailure(null)); 
         }, 4000);
         setTimeout(() => {
             setUpdateSuccess(false);
@@ -100,25 +131,38 @@ function Profile() {
     }
 };
 
+/**************************    HANDLE LISTING DELETE FUNCTION   *********************/
+/*
+1. API REQUEST TO DELETE LISTING to api/listing/delete/:id to delete the listing from the db
+2. If the response is unsuccessful (ie if the listing is NOT deleted), log the error message to the console
+3. If the response is successful(ie if the listing is deleted), filter the user listings to remove the deleted listing from the user listings
+4. If there is an error during the API request, dispatch deleteListingFailure action with the error message
+5. Clear the error message after 4 seconds
+*/
 
-  const handleListingDelete = async (listingId) => {
-    try {
-      const res = await fetch(`/api/listing/delete/${listingId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        console.log(data.message);
-        return;
-      }
-      setUserListings((prev) =>
-        prev.filter((listing) => listing._id !== listingId)
-      );
-    } catch (error) {
-      console.log(error.message);
+const handleListingDelete = async (listingId) => {
+  try {
+    const response = await fetch(`/api/listing/delete/${listingId}`, {
+      method: "DELETE",
+    });
+    const data = await response.json();
+    if (data.success === false) {
+      dispatch(deleteListingFailure(data.message)); 
+      setTimeout(() => {
+        dispatch(deleteListingFailure(null)); 
+      }, 4000);
+      return;
     }
-  };
+    setUserListings((prev) => prev.filter((listing) => listing._id !== listingId));
+  } catch (error) {
+    dispatch(deleteListingFailure(error.message)); 
+    setTimeout(() => {
+      dispatch(deleteListingFailure(null)); 
+    }, 4000);
+  }
+};
 
+/*********************************    RETURN UI   *************************************/
   return (
     <div className="p-3 max-w-lg mx-auto text-center mt-5">
       {/* Profile picture, centered */}

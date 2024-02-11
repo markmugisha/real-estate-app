@@ -3,6 +3,7 @@ import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   signOutUserStart,
   deleteUserFailure,
@@ -10,10 +11,7 @@ import {
   deleteUserStart,
   signOutUserFailure,
   signOutUserSuccess,
-
 } from "../redux/user/userSlice";
-
-import { useDispatch } from "react-redux";
 
 function Header() {
   const { currentUser } = useSelector((state) => state.user);
@@ -46,9 +44,8 @@ function Header() {
       navigate("/"); // Redirecting to the sign-in page after sign-out
     } catch (error) {
       dispatch(signOutUserFailure(error.message)); // Dispatching a failure action if there was an error during sign-out
-    }  
+    }
   };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -95,8 +92,8 @@ function Header() {
     <header className="bg-slate-200 shadow-md h-24">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
         <Link to="/">
-          <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-            <span className="text-slate-500">Realtime</span>
+          <h1 className="font-bold text-sm sm:text-xl flex flex-wrap items-center ">
+            <span className="text-slate-500 from-neutral-400 ">Realmark</span>
             <span className="text-slate-700">Estate</span>
           </h1>
         </Link>

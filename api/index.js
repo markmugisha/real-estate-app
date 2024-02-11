@@ -35,11 +35,14 @@ app.use("/api/listing", listingRouter);
 
 //Serve static assets if in production. Must come after routes.
 app.use(express.static(path.join(__dirname, "/client/dist")));
-app.get("*", (req, res) =>{
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
 
-//Error handling middleware.
+// Error handling middleware
+/*
+When you call next(error) within a route handler, middleware function, or asynchronous operation, Express.js looks for the next middleware function in the chain that is capable of handling errors. This includes the error-handling middleware that is defined with the (err, req, res, next) signature. So, calling next(error) effectively triggers the execution of the error-handling middleware.
+*/
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";

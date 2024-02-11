@@ -55,10 +55,18 @@ const CreateListing = () => {
         .catch(() => {
           setImageUploadError("Image upload failed (2MB max per image )");
           setUploading(false);
+
+          setTimeout(() => {
+            setImageUploadError(false);
+          }, 4000); 
         });
     } else {
       setImageUploadError("You can only upload up to 6 images per listing");
       setUploading(false);
+
+      setTimeout(() => {
+        setImageUploadError(false);
+      }, 4000);
     }
   };
 
@@ -155,7 +163,7 @@ const CreateListing = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <main className="p-3 max-w-4xl mx-auto bg-white mt-12">
       <h1 className="text-3xl font-semibold text-center my-7 text-slate-700">

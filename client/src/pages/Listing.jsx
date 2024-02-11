@@ -19,27 +19,45 @@ const Listing = () => {
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    const fetchListing = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/listing/get/${params.listingId}`);
-        const data = await res.json();
-        if (data.success === false) {
+  /**********************   FETCH LISTING USEEFFECT  ********************************/
+  /*
+    1. This useEffect hook is responsible for fetching a listing from the server when the listingId parameter changes.
+    2. When the fetchListing function is called, it sets the loading state to true to indicate that the fetch operation has started.
+    3. It then makes a GET request to the server to fetch the listing with the given listingId. In JavaScript, when you make a request to an API using the fetch API, the default HTTP method used is implicitly GET if not specified otherwise.
+    4. The response data from the server is then converted to JSON using the response.json() method.
+    5. If the success property of the data object is false, it sets the error state to true. When it is true, it displays an error message to the user that "something went wrong" - futher down in the RETURN UI code - {error && <p className="text-center my-7 text-2xl">Something went wrong!</p>}.
+    6. Sets loading to false to indicate that the fetch operation has completed and returns.
+    7. If the success property of the data object is true, it sets the listing state to the data object (earlier converted to json). This data object contains the listing details fetched from the server.
+    8. Sets loading to false to indicate that the fetch operation has completed and sets the error state to false.
+    9. The [params.listingId] dependency array for the useEffect hook. Whenever the listingId parameter changes, the fetchListing function is called to fetch the listing with the new listingId.
+  */
+
+    useEffect(() => {
+      const fetchListing = async () => {
+        try {
+          setLoading(true);
+          const response = await fetch(`/api/listing/get/${params.listingId}`);
+          const data = await response.json();
+          if (data.success === false) {
+            setError(true);
+            setLoading(false);
+            setTimeout(() => setError(false), 4000); 
+            return;
+          }
+          setListing(data);
+          setLoading(false);
+          setError(false);
+        } catch (error) {
           setError(true);
           setLoading(false);
-          return;
+          setTimeout(() => setError(false), 4000); 
         }
-        setListing(data);
-        setLoading(false);
-        setError(false);
-      } catch (error) {
-        setError(true);
-        setLoading(false);
-      }
-    };
-    fetchListing();
-  }, [params.listingId]);
+      };
+      fetchListing();
+    }, [params.listingId]);
+    
+
+/**************************** RETURN UI ***************************************/
 
   return (
     <main>
@@ -114,7 +132,7 @@ const Listing = () => {
 
             </div>
             <p className="text-slate-800">
-              <span className="font-semibold text-black">Description - </span>
+              <span className="font-semibold text-black truncate">Description - </span>
               {listing.description}
             </p>
             <ul className="text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6">

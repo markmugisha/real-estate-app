@@ -1,3 +1,10 @@
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation } from "swiper/modules";
+import SwiperCore from "swiper";
+import "swiper/css/bundle";
+import "swiper/css/navigation";
+import "swiper/css";
+
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -10,6 +17,8 @@ import { app } from "../firebase";
 import { Link } from "react-router-dom";
 
 function ShowListings() {
+  SwiperCore.use([Navigation]);
+
   const fileRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
@@ -27,6 +36,7 @@ function ShowListings() {
       handleFileUpload(file);
     }
   }, [file]);
+  
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -88,18 +98,27 @@ function ShowListings() {
        <div className="mb-4">
         <h1 className="text-3xl font-semibold">My Listings</h1>
       </div>
-      
-      <div className="image-container">
-        <img
-          src="https://images.unsplash.com/photo-1612965607446-25e1332775ae?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Image"
-          className="w-full h-[300px] object-cover"
-          style={{
-            background: `center no-repeat`,
-            backgroundSize: "cover",
-          }}
-        />
-      </div>
+
+      <Swiper 
+        navigation={true}
+        loop={true}
+        modules={[Navigation, Autoplay]}
+        autoplay={{ delay: 4500 }}
+      >
+        {userListings &&
+          userListings.length > 0 &&
+          userListings.map((listing) => (
+            <SwiperSlide key={listing._id}>
+              <div
+                style={{
+                  background: `url(${listing.imageUrls[0]}) center no-repeat`,
+                  backgroundSize: "cover",
+                }}
+                className="h-[500px]"
+              ></div>
+            </SwiperSlide>
+          ))}
+      </Swiper>
 
       {/* Display user listings */}
       {userListings && userListings.length > 0 && (

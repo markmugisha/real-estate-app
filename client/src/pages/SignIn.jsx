@@ -14,6 +14,13 @@ function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  /************************    HANDLE CHANGE FUNCTION    ********************************/
+  /*  HANDLE CHANGE FUNCTION - update the form data when the user types in the input fields
+  1. setFormData - update the form data with the new value from the input field
+  2. The id of the input field is used as the key to update the form data
+  3. ...formData - spread the form data to keep the other form data properties
+  4. e.target.id - the id of the input field that triggered the change event (username, email, or password).
+  */
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -21,24 +28,37 @@ function SignIn() {
     });
   };
 
-  /*****************HANDLE SUBMIT FUNCTION*****************************/
+  /************************   HANDLE SUBMIT FUNCTION        *****************************/
+  /* 
+  1.API CALL TO SIGN IN A USER - make a POST request to /api/auth/signin
+    2. dispatch(signInStart()) - Dispatching a start action indicating the sign-in process has started
+    3. response - the response from the server after fetch by making the POST request
+    4. formData - the form data sent to the server - email and password of the user
+    5. data - the JSON data from the response to be compared with user input data.
+    6. If the success property is false, dispatch(signInFailure(data.message)) - Dispatching a failure action if sign-in was not successful
+    7. If the success property is true, dispatch(signInSuccess(data)) - Dispatching a success action if sign-in was successful
+    8. navigate("/") - Redirecting to the home page after sign-in
+    9. If there is an error, dispatch(signInFailure(error.message)) - Dispatching a failure action if there was an error during sign-in
+    10. The error message will be displayed to the user if there is an error and will clear after 4 seconds.
+    11. We are using Redux in this component to manage the user state and share the user data with other components.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
+      const response = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-      const data = await res.json();
+      const data = await response.json();
       if (data.success === false) {
         dispatch(signInFailure(data.message));
         setTimeout(() => {
-          dispatch(signInFailure(null)); // Clear the error message
-        }, 4000); // Hide error message after 4 seconds
+          dispatch(signInFailure(null)); 
+        }, 4000); 
         return;
       }
       dispatch(signInSuccess(data));
@@ -46,12 +66,12 @@ function SignIn() {
     } catch (error) {
       dispatch(signInFailure(error.message));
       setTimeout(() => {
-        dispatch(signInFailure(null)); // Clear the error message
-      }, 4000); // Hide error message after 4 seconds
+        dispatch(signInFailure(null)); 
+      }, 4000); 
     }
   };
 
- 
+/*********************************    RETURN UI   **********************************/ 
   return (
     <div className="h-full items-center justify-center bg-sage-300 max-w-lg mx-auto">
       <div className="bg-white bg-opacity-90 p-8 rounded-md w-full max-w-md mt-12">
