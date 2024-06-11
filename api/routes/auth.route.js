@@ -1,5 +1,5 @@
 import express from 'express';
-import { google, signin, signup, signout } from '../controllers/auth.controller.js';
+import { google, signin, signup, signout, forgotPassword, resetPassword } from '../controllers/auth.controller.js';
 
 
 const router = express.Router();
@@ -7,7 +7,9 @@ const router = express.Router();
 router.post('/signup', signup);//Signup function comes from auth.controller.
 router.post('/signin', signin);
 router.post('/google', google);
-router.get('/signout', signout); 
+router.get('/signout', signout);
+router.post('/forgot-password', forgotPassword); //Added by me
+router.post('/reset-password/:id/:token', resetPassword); //Added by me
 
 
 export default router;

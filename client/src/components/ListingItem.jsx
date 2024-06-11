@@ -29,8 +29,8 @@ const ListingItem = ({ listing }) => {
           <div className="flex gap-4">
             <div className="font-bold text-xs">
               {listing.bedrooms > 1
-                ? `${listing.bedrooms} beds `
-                : `${listing.bedrooms} bed `}
+                ? `${listing.bedrooms} bedrooms `
+                : `${listing.bedrooms} bedroom`}
             </div>
             <div className="font-bold text-xs">
               {listing.bathrooms > 1

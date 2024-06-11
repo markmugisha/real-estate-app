@@ -18,31 +18,22 @@ mongoose
   });
 
 const __dirname = path.resolve();
-
 const app = express();
 
 app.use(express.json());
-
 app.use(cookieParser());
-
-app.listen(3000, () => {
-  console.log("Port is running on port 3000");
-});
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRouter);
 
-//Serve static assets if in production. Must come after routes.
-app.use(express.static(path.join(__dirname, "/client/dist")));
+// Serve static assets if in production. Must come after routes.
+app.use(express.static(path.join(__dirname, "client")));
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "client", "index.html"));
 });
 
 // Error handling middleware
-/*
-When you call next(error) within a route handler, middleware function, or asynchronous operation, Express.js looks for the next middleware function in the chain that is capable of handling errors. This includes the error-handling middleware that is defined with the (err, req, res, next) signature. So, calling next(error) effectively triggers the execution of the error-handling middleware.
-*/
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
@@ -51,4 +42,9 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

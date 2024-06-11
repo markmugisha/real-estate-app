@@ -12,8 +12,6 @@ const initialState = {
 1. Reducers - functions that take the current state and an action, and handle the action    by returning a new state.
 2. Actions - objects that contain a type and a payload. Actions are dispatched to the reducer functions to update the state.
 */
-
-
 const userSlice = createSlice({
   name: "user",
   initialState, // Initial state created above
@@ -87,7 +85,6 @@ const userSlice = createSlice({
     }
   },
 });
-
 
 export const {
   signInStart,

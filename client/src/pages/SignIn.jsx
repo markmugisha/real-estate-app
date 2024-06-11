@@ -28,7 +28,7 @@ function SignIn() {
     });
   };
 
-  /************************   HANDLE SUBMIT FUNCTION        *****************************/
+  /*******************  HANDLE SUBMIT FUNCTION        ***********************/
   /* 
   1.API CALL TO SIGN IN A USER - make a POST request to /api/auth/signin
     2. dispatch(signInStart()) - Dispatching a start action indicating the sign-in process has started
@@ -57,8 +57,8 @@ function SignIn() {
       if (data.success === false) {
         dispatch(signInFailure(data.message));
         setTimeout(() => {
-          dispatch(signInFailure(null)); 
-        }, 4000); 
+          dispatch(signInFailure(null));
+        }, 4000);
         return;
       }
       dispatch(signInSuccess(data));
@@ -66,12 +66,12 @@ function SignIn() {
     } catch (error) {
       dispatch(signInFailure(error.message));
       setTimeout(() => {
-        dispatch(signInFailure(null)); 
-      }, 4000); 
+        dispatch(signInFailure(null));
+      }, 4000);
     }
   };
 
-/*********************************    RETURN UI   **********************************/ 
+  /***************************    RETURN UI   ***************************/
   return (
     <div className="h-full items-center justify-center bg-sage-300 max-w-lg mx-auto">
       <div className="bg-white bg-opacity-90 p-8 rounded-md w-full max-w-md mt-12">
@@ -93,18 +93,32 @@ function SignIn() {
             id="password"
             onChange={handleChange}
           />
-          <button
-            disabled={loading}
-            className="bg-slate-500 hover:opacity-95 text-white p-3 rounded-md uppercase disabled:opacity-80"
-          >
-            {loading ? "Loading..." : "Sign In"}
-          </button>
-          <OAuth />
+
+          <div className="justify-between items-center mt-5">
+            <button
+              disabled={loading}
+              className="bg-slate-500 hover:opacity-95 text-white p-3 rounded-md uppercase disabled:opacity-80 w-full"
+            >
+              {loading ? "Loading..." : "Sign In"}
+            </button>
+{/* This div to be removed */}
+            {/* <div className="flex justify-between items-center">
+              <h1 className="text-slate-600 font-semibold">
+                Forgot your password?
+              </h1>
+              <Link to="/forgot-password">
+                <span className="text-blue-700 font-semibold hover:underline">Reset</span>
+              </Link>
+            </div> */}
+          </div>
+          <OAuth/>
         </form>
-        <div className="flex justify-between items-center mt-5">
-          <div className="text-slate-600 font-semibold">Do not have an account?</div>
+        <div className="flex justify-between items-center">
+          <h1 className="text-slate-600 font-semibold">
+            Do not have an account?
+          </h1>
           <Link to="/sign-up">
-            <span className="text-blue-700 font-semibold">Sign up</span>
+            <span className="text-blue-700 font-semibold hover:underline">Sign up</span>
           </Link>
         </div>
         {error && <p className="text-red-500 mt-5">{error}</p>}

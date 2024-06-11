@@ -80,7 +80,7 @@ function Home() {
         </div>
         <div className="mr-auto">
           <div className="text-gray-400 ">
-            Realtime estate, the leading real estate marketplace.
+            Realmark estate, the leading real estate marketplace.
             <br />
             We have the best accomodation in town.
           </div>

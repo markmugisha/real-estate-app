@@ -268,7 +268,6 @@ const Search = () => {
             listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
             ))}
-
           {showMore && (
             <button
               onClick={onShowMoreClick}

@@ -11,6 +11,8 @@ import UpdateListing from "./pages/UpdateListing";
 import Listing from "./pages/Listing";
 import Search from "./pages/Search";
 import ShowListings from "./pages/ShowListings";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword"
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="/about" element={<About/>}/>
         <Route path="/search" element={<Search/>}/>
         <Route path="/show-listings" element={<ShowListings/>}/>
+        <Route path="/forgot-password" element={<ForgotPassword/>}/> {/*Added*/}
+        <Route path="/reset-password" element={<ResetPassword/>}/> {/*Added*/}
         <Route path="/listing/:listingId" element={<Listing/>}/>
         <Route element={<PrivateRoute />}> 
           <Route path="/profile" element={<Profile/>}/>
@@ -35,3 +39,4 @@ function App() {
 }
 
 export default App
+

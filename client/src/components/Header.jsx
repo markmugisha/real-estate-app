@@ -12,6 +12,7 @@ import {
   signOutUserFailure,
   signOutUserSuccess,
 } from "../redux/user/userSlice";
+import logo from '../assets/logo.png'
 
 function Header() {
   const { currentUser } = useSelector((state) => state.user);
@@ -91,11 +92,10 @@ function Header() {
   return (
     <header className="bg-slate-200 shadow-md h-24">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
+        
+        {/* Logo */}
         <Link to="/">
-          <h1 className="font-bold text-sm sm:text-xl flex flex-wrap items-center ">
-            <span className="text-slate-500 from-neutral-400 ">Realmark</span>
-            <span className="text-slate-700">Estate</span>
-          </h1>
+          <img src={logo} alt="" className="h-[100px] w-[200px]" />   
         </Link>
 
         <form
